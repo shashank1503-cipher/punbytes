@@ -5,14 +5,16 @@ import {
   Heading,
   extendTheme,
   Text,
-  useColorModeValue,
   Button,
   Spinner,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
 import '@fontsource/raleway/400.css';
 import '@fontsource/poppins/700.css';
+import Footer from './Footer';
 function App() {
   const customTheme = {
     styles: {
@@ -26,7 +28,7 @@ function App() {
   const theme = extendTheme(customTheme);
   const [joke, setJoke] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const getJoke = async () => {
     setLoading(true);
     setError(false);
@@ -37,7 +39,8 @@ function App() {
       const data = await res.json();
       setJoke(data.joke);
     } catch (error) {
-      setError(true);
+      console.error(error);
+      setError(error);
     }
     setLoading(false);
   };
@@ -61,6 +64,12 @@ function App() {
         >
           <Spinner color="#21E6C1" size={'xl'} />
         </Flex>
+      ) : error ? (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>{error.title}</AlertTitle>
+          <AlertDescription>{error.message}</AlertDescription>
+        </Alert>
       ) : (
         <>
           <Flex justifyContent={'center'} alignItems={'center'} minH={'75vh'}>
@@ -73,11 +82,12 @@ function App() {
               {joke}
             </Text>
           </Flex>
-          <Flex justifyContent={'flex-end'} mr={10}>
+          <Flex justifyContent={['center','center','flex-end','flex-end']} mr={10} mb={12}>
             <Button onClick={getJoke}> Another One</Button>
           </Flex>
         </>
       )}
+      <Footer />
     </ChakraProvider>
   );
 }
